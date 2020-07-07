@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Coinbase";
+    Layout = null;
+}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<div class="container-fluid">
+    <h2>Coinbase</h2>
+    @{
+        var blocks = ViewBag.Blocks as List<Block>;
+    }
+    <div class="row row-horizon">
+        @{
+            int i = 1;
+            int j = 1;
+        }
+        @foreach (var block in blocks)
+        {
+            <div class="col-xl-7">
+                <div id="blockchainWell" class="well well-success">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="blockchainNumber" class="col-sm-2 control-label">Block:</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">#</span>
+                                    <input id="blockchainNumber" type="text" value="@i" onkeyup="updateChain(1, 1);" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="blockchainNonce" class="col-sm-2 control-label">Nonce:</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">#</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

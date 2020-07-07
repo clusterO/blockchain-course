@@ -1,0 +1,117 @@
+﻿<button type="submit" id="refreshTransactions" class="btn btn-primary">
+    <i class="fa fa-refresh" />
+</button>
+
+@{
+    var transactions = ViewBag.Transactions as List<Transaction>;
+}
+
+<div class="container">
+    <table id="unminedTransactionsTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Recipient address</th>
+                <th>Sender address</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var item in transactions)
+            {
+                <tr>
+                    <th>@i</th>
+                    <th>@item.Recipient</th>
+                    <th>@item.Sender</th>
+                    <th>@item.Amount</th>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+
+    <div class="col-lg-12 text-center">
+        <a href="@Url.Action("Mine", "Home")" id="mine" class="btn btn-primary btn-lg" value="">Mine</a>
+    </div>
+</div>
+
+<button type="submit" id="refreshBlockchain" class="btn btn-primary">
+    <i class="fa fa-refresh" />
+</button>
+
+@{
+    var blocks = ViewBag.Blocks as List<Block>;
+}
+
+<div class="container">
+    <table id="transactionsTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th width="20%">Recipient address</th>
+                <th width="20%">Sender address</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Block</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int j = 1;
+            }
+            @foreach (var block in blocks)
+            {
+                @foreach (var item in block.Transactions)
+                {
+                    <tr>
+                        <th>@j</th>
+                        <th>@item.Recipient</th>
+                        <th>@item.Sender</th>
+                        <th>@item.Amount</th>
+                        <th>@block.Timestamp</th>
+                        <th>@(block.Index + 1)</th>
+                    </tr>
+                    j++;
+                }
+            }
+        </tbody>
+    </table>
+
+    <div class="col-lg-12 text-center">
+        <a href="@Url.Action("Mine", "Home")" id="mine" class="btn btn-primary btn-lg" value="">Mine</a>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.22/dataRender/ellipsis.js"></script>
+
+<script>
+     
+    $(() => {
+        $('#unminedTransactionsTable').dataTable();
+        $('transactionsTable').dataTable();
+
+        $('refreshTransactions').click(() => {
+            window.location.reload();
+        });
+
+        $('refreshBlockchain').click(() => {
+            $.ajax({
+                url: "/nodes/resolve",
+                type: "GET",
+                success: (response) => {
+                    window.location.reload();
+                },
+                error: (error) => {
+                    console.log(error);
+                }
+            })
+        })
+    });
+
+</script>

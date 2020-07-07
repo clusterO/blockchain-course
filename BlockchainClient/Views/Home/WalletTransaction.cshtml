@@ -1,0 +1,77 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card-body">
+                <h4 class="card-title">Wallet transactions</h4>
+                <p class="card-text">Enter a public key and click wallet transactions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container alert alert-secondary">
+    @using (Html.BeginForm())
+    {
+        <div class="row">
+            <label class="col-sm-2">Node Url:</label>
+            <div class="col-sm-10">
+                <textarea id="nodeUrl" name="publicKey" rows="1" class="form-control"></textarea>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <input type="submit" id="viewTransactions" class="btn btn-primary btn-lg" value="Wallet transactions" />
+            </div>
+        </div>
+    }
+</div>
+<br>
+
+<div class="container">
+    <table id="transactionsTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th width="20%">Recipient address</th>
+                <th width="20%">Sender address</th>
+                <th>Amount</th>
+==            </tr>
+        </thead>
+        <tbody>
+            @{
+                int j = 1;
+                decimal balance = 0;
+            }
+            @foreach (var item in Model)
+            {
+                if (item.Recipient == Sender)
+                    balance += item.Amount;
+                else
+                    balance -= item.Amount;
+
+                <tr>
+                    <th>@j</th>
+                    <th>@item.Recipient</th>
+                    <th>@item.Sender</th>
+                    <th>@item.Amount</th>
+                </tr>
+                j++;
+            }
+        </tbody>
+    </table>
+    <b>Total balance: @balance</b>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.22/dataRender/ellipsis.js"></script>
+
+<script>
+
+    $(() => {
+        $('#transactionsTable').dataTable();
+    });
+
+</script>

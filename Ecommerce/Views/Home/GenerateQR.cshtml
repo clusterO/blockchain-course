@@ -1,0 +1,58 @@
+﻿<div class="container alert alert-secondary">
+    @using (Html.BeginForm())
+    {
+        <div class="row">
+            <label class="col-sm-2">Receiver address:</label>
+            <div class="col-sm-10">
+                <input type="text" id="receiver" class="form-control" placeholder="" />
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-2">Amount:</label>
+            <div class="col-sm-10">
+                <input type="text" id="amount" class="form-control" placeholder="" />
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <input type="button" id="generateQR" class="btn btn-primary btn-lg" value="Generate QR code" placeholder="" />
+            </div>
+        </div>
+    }
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 text-center">
+            <div id="qrcode">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/qrcode.js"></script>
+
+    <script>
+        $('#generateQR').on('click', () => {
+            var $this = $('#qrcode');
+            var receiver = $('#receiver').val();
+            var amount = $('#amount').val();
+            var value = 'https://192.168.1.1:5555/api/Pay?recipent' + receiver + '&fees=1&amount=' + amount;
+
+            $this.html('');
+
+            var qrsize = 250;
+
+            $this.css({
+                'width': qrSize,
+                'height': qrSize
+            })
+
+            $this.qrcode({ width: qrSize, height: qrSize, text: value });
+        });
+    </script>
+}

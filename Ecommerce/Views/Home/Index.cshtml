@@ -1,0 +1,94 @@
+﻿@page
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    string ip = HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+    var users = OwnedItem.users;
+    var lastItems = ViewBag.Items as List<Item>;
+    var DomainName = HttpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContextAccessor.HttpContext.Request.Host;
+}
+
+<style>
+    .qrcode {
+        width: 128px;
+        height: 128px;
+        margin: 0 auto;
+        text-align: center;
+    }
+</style>
+
+<div>
+    @foreach (var item in lastItems)
+    {
+        <br>
+        <div class="row">
+            <div class="col-lg-10" style="color:blue">
+                <h2>@item.Title</h2>
+            </div>
+        </div>
+        <div class="row">
+            @{
+                string img = "/images" + item.Id + ".png";
+            }
+            @if (users.FirstOrDefault(x => x.Id == item.Id && x.Ip == ip) == null)
+            {
+                <div class="col-xs-8" style="height:500px; background-image:url('@img'); background-repeat: no-repeat;">
+                    <div id="div_@item.Id" class="text-center" style="background-color:white">
+                        <div class="qrcode">
+                            https://192.168.1.1:5555/api/Pay?pid=@item.Id&ip=@ip&recipient=1
+                        </div>
+                        <h2 style="background-color:white">Pay @item.Price coins to unlock this item</h2>
+                    </div>
+                    <iframe id="iframe_@item.Id" width="860" height="480" class="hide"></iframe>
+                </div>
+            }
+            else
+            {
+                <div class="col-xs-8">
+                    <iframe id="iframe_@item.Id" width="860" height="480" class="hide" src="https://item.org"></iframe>
+                </div>
+            }
+        </div>
+        <div class="col-xs-4"></div>
+    }
+</div>
+
+<script src="~/lib/signalr/signalr.js"></script>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    connection.on("@ip", (id, url) => {
+        var v = document.getElementById("div_" + id);
+        v.setAttribute("class", "hide");
+        v.parentElement.setAttribute("style", "");
+        c.setAttribute("src", "http://item.org" + url);
+        c.setAttribute("class", "");
+    });
+    connection.start().catch(err => console.error(err.toString()));
+</script>
+
+@section scripts{
+    <script src="~/js/qrcode.js"></script>
+
+    <script>
+        $('.qrcode').each(() => {
+            var $this = $(this);
+            var value = $this.text().trim();
+
+            $this.html('');
+
+            var qrsize = 200;
+
+            $this.css({
+                'width': qrsize,
+                'height': qrsize
+            })
+
+            $this.qrcode({ width: qrsize, height: qrsize, text: value })
+        })
+    </script>
+}
